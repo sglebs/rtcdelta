@@ -29,6 +29,33 @@ def ensure_path_exists(path):
     if not os.path.exists(path):
         os.mkdir(path)
 
+
+def fetch_changesets(work_item):
+    print("%s : %s"% (work_item.identifier, work_item.title))
+    changesets = work_item.getChangeSets()
+    if not changesets:
+        return
+
+    for changeset in changesets:
+        print("Traversing %s" % changeset)
+        try:
+            changes_list = changeset.getChanges()
+        except Exception:
+            errors_list.append(changeset)
+            print('--> {} don\'t have changes'.format(changeset))
+            continue
+
+        for change in changes_list:
+            print("Extracting before&after for change: %s" % change.comment)
+            try:
+                change.fetchBeforeStateFile(arguments["--beforePath"])
+                change.fetchAfterStateFile(arguments["--afterPath"])
+            except KeyError:
+                errors_list.append(change)
+                print('--> Error {}'.format(change))
+                continue
+
+
 if __name__ == '__main__':
     arguments = docopt(__doc__, version='RTC Delta')
     if arguments["--logs"]:
@@ -40,11 +67,14 @@ if __name__ == '__main__':
     ensure_path_exists(arguments["--beforePath"])
     ensure_path_exists(arguments["--afterPath"])
     work_item = rtc_client.getWorkitem(arguments["--workitem"]) # ,returned_properties="dc.ientifier,dc:title,rtc_cm:com.ibm.team.filesystem.workitems.change_set.com.ibm.team.scm.ChangeSet"
-    print("%s : %s"% (work_item.identifier, work_item.title))
-    changesets = work_item.getChangeSets()
-    for changeset in changesets:
-        print("Traversing %s" % changeset)
-        for change in changeset.getChanges():
-            print("Extracting before&after for change: %s" % change.comment)
-            change.fetchBeforeStateFile(arguments["--beforePath"])
-            change.fetchAfterStateFile(arguments["--afterPath"])
+    fetch_changesets(work_item)
+    errors_list = []
+    children_list = work_item.getChildren()
+    if children_list:
+        for children in children_list:
+            fetch_changesets(children)
+
+    if errors_list:
+        print('Errors:')
+        for error in errors_list:
+            print('  {}'.format(error))
