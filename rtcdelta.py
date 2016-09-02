@@ -24,6 +24,7 @@ from docopt import docopt
 from rtcclient.client import RTCClient
 from rtcclient.utils import setup_basic_logging
 import os.path
+import logging
 
 def ensure_path_exists(path):
     if not os.path.exists(path):
@@ -33,6 +34,9 @@ if __name__ == '__main__':
     arguments = docopt(__doc__, version='RTC Delta')
     if arguments["--logs"]:
         setup_basic_logging()
+    else:
+        logging.basicConfig(level=logging.CRITICAL)
+
     rtc_client = RTCClient(arguments["--url"],
                           arguments["--user"],
                           arguments["--pass"],
