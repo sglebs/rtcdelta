@@ -51,8 +51,8 @@ def get_children(workitem):
     if not children_list:
         return workitem_list
 
-    for children in children_list:
-        workitem_list += get_children(children)
+    for child in children_list:
+        workitem_list += get_children(child)
 
     return workitem_list
 
@@ -72,9 +72,9 @@ if __name__ == '__main__':
     ensure_path_exists(arguments["--afterPath"])
     workitem = rtc_client.getWorkitem(arguments["--workitem"]) # ,returned_properties="dc.ientifier,dc:title,rtc_cm:com.ibm.team.filesystem.workitems.change_set.com.ibm.team.scm.ChangeSet"
     if arguments['--children']:
-        for children in get_children(workitem):
-            print("%s : %s"% (children.identifier, children.title))
-            get_changes(children.getChangeSets())
+        for child in get_children(workitem):
+            print("%s : %s"% (child.identifier, child.title))
+            get_changes(child.getChangeSets())
     else:
         print("%s : %s"% (workitem.identifier, workitem.title))
         get_changes(workitem.getChangeSets())
