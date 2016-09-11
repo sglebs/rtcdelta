@@ -44,8 +44,8 @@ def get_changes(changesets):
             change.fetchAfterStateFile(arguments["--afterPath"])
 
 
-def get_children(workitem):
-    print("Getting children_list of %s : %s"% (workitem.identifier, workitem.title))
+def get_workitem_list(workitem):
+    print("Getting workitem list from %s : %s"% (workitem.identifier, workitem.title))
     workitem_list = [workitem]
     children_list = workitem.getChildren()
     if not children_list:
@@ -72,7 +72,7 @@ if __name__ == '__main__':
     ensure_path_exists(arguments["--afterPath"])
     workitem = rtc_client.getWorkitem(arguments["--workitem"]) # ,returned_properties="dc.ientifier,dc:title,rtc_cm:com.ibm.team.filesystem.workitems.change_set.com.ibm.team.scm.ChangeSet"
     if arguments['--children']:
-        for child in get_children(workitem):
+        for child in get_workitem_list(workitem):
             print("%s : %s"% (child.identifier, child.title))
             get_changes(child.getChangeSets())
     else:
