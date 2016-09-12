@@ -36,9 +36,9 @@ def get_changes(changesets):
     if not changesets:
         return
 
-    for changeset in changesets:
+    for changeset in sorted(changesets, key=lambda changeset: changeset['modified']):
         print("Traversing %s" % changeset)
-        for change in changeset.getChanges():
+        for change in sorted(changeset.getChanges(), key=lambda change: change['modified'])
             print("Extracting before&after for change: %s" % change.comment)
             change.fetchBeforeStateFile(arguments["--beforePath"])
             change.fetchAfterStateFile(arguments["--afterPath"])
