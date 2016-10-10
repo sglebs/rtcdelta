@@ -56,11 +56,9 @@ def get_workitem_list(workitem):
     ))
     workitem_list = [workitem]
     children_list = workitem.getChildren()
-    if not children_list:
-        return workitem_list
-
-    for child in children_list:
-        workitem_list += get_workitem_list(child)
+    if children_list:
+        for child in children_list:
+            workitem_list += get_workitem_list(child)
 
     return workitem_list
 
