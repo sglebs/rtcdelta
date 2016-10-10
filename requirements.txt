@@ -1,3 +1,2 @@
 docopt==0.6.2
-#rtcclient==0.5.0
 git+git://github.com/dixudx/rtcclient.git@development
